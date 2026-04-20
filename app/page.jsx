@@ -1,8 +1,499 @@
-export default function HomePage() {
+'use client';
+
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+const IconBase = ({ children, className = "h-6 w-6", strokeWidth = 1.6 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={strokeWidth}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    {children}
+  </svg>
+);
+
+const Icons = {
+  Phone: (p) => (
+    <IconBase {...p}>
+      <path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.72 19.72 0 0 1-8.59-3.07 19.38 19.38 0 0 1-6-6 19.72 19.72 0 0 1-3.07-8.6A2 2 0 0 1 4.18 1h2a2 2 0 0 1 2 1.72c.12.86.3 1.7.54 2.5a2 2 0 0 1-.45 2.11L7 8a16 16 0 0 0 9 9l.67-1.27a2 2 0 0 1 2.11-.45c.8.24 1.64.42 2.5.54A2 2 0 0 1 22 16.92z" />
+    </IconBase>
+  ),
+  Calendar: (p) => (
+    <IconBase {...p}>
+      <rect x="3" y="4" width="18" height="17" rx="2" />
+      <path d="M8 2v4M16 2v4M3 10h18" />
+    </IconBase>
+  ),
+  Building: (p) => (
+    <IconBase {...p}>
+      <rect x="6" y="3" width="12" height="18" rx="2" />
+      <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-2M14 21v-2" />
+    </IconBase>
+  ),
+  Scissors: (p) => (
+    <IconBase {...p}>
+      <circle cx="6" cy="6" r="2" />
+      <circle cx="6" cy="18" r="2" />
+      <path d="M20 4L7 13M7 11l13 9" />
+    </IconBase>
+  ),
+  Tooth: (p) => (
+    <IconBase {...p}>
+      <path d="M8 3c-2.5 0-4 2.2-4 4.6C4 11 6 13 6 16s1.2 5 2.5 5c1.6 0 1.8-3 3.5-3s1.9 3 3.5 3C17.8 21 19 19 19 16s2-5 2-8.4C21 5.2 19.5 3 17 3c-2.2 0-3.2 1.4-5 1.4S10.2 3 8 3z" />
+    </IconBase>
+  ),
+  Stethoscope: (p) => (
+    <IconBase {...p}>
+      <path d="M6 3v4a4 4 0 1 0 8 0V3M10 11v2a5 5 0 0 0 10 0v-1" />
+      <circle cx="20" cy="12" r="2" />
+    </IconBase>
+  ),
+  Wrench: (p) => (
+    <IconBase {...p}>
+      <path d="M21 2l-4.5 4.5a3.5 3.5 0 1 0 1 1L22 3l-1-1z" />
+      <path d="M12 8L4 16l4 4 8-8" />
+      <circle cx="5" cy="19" r="1" />
+    </IconBase>
+  ),
+  Shield: (p) => (
+    <IconBase {...p}>
+      <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" />
+    </IconBase>
+  ),
+  Headphones: (p) => (
+    <IconBase {...p}>
+      <path d="M4 14v4a2 2 0 0 0 2 2h1V12a7 7 0 0 1 14 0v8h-1a2 2 0 0 1-2-2v-4" />
+      <path d="M4 14a8 8 0 1 1 16 0" />
+    </IconBase>
+  ),
+  Globe: (p) => (
+    <IconBase {...p}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20M12 2c3 3.5 3 14.5 0 20M12 2c-3 3.5-3 14.5 0 20" />
+    </IconBase>
+  ),
+  BarChart: (p) => (
+    <IconBase {...p}>
+      <path d="M3 21h18" />
+      <rect x="6" y="10" width="3" height="8" rx="1" />
+      <rect x="11" y="6" width="3" height="12" rx="1" />
+      <rect x="16" y="13" width="3" height="5" rx="1" />
+    </IconBase>
+  ),
+  Sparkles: (p) => (
+    <IconBase {...p}>
+      <path d="M12 2l2.5 5 5 2.5-5 2.5L12 17l-2.5-5L4.5 9.5 9.5 7z" />
+      <path d="M19 17l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z" />
+    </IconBase>
+  ),
+  Message: (p) => (
+    <IconBase {...p}>
+      <rect x="3" y="4" width="18" height="14" rx="2" />
+      <path d="M7 18l-4 3V6" />
+    </IconBase>
+  ),
+  ArrowRight: (p) => (
+    <IconBase {...p}>
+      <path d="M5 12h14M13 5l7 7-7 7" />
+    </IconBase>
+  ),
+  Check: (p) => (
+    <IconBase {...p}>
+      <path d="M20 6L9 17l-5-5" />
+    </IconBase>
+  ),
+};
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, info) {
+    console.error("ErrorBoundary caught:", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-black text-white p-6">
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/10 bg-white/5 p-6">
+            <h1 className="text-xl font-semibold">Something went wrong.</h1>
+            <p className="mt-2 text-sm text-white/70">A runtime error occurred.</p>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const brand = {
+  name: "Covex",
+  supportEmail: "support@covex.app",
+  phone: "+1 (864) 787-8324",
+};
+
+const websitePricing = [
+  {
+    name: "One-Page Launch",
+    setup: 999,
+    monthly: 149,
+    blurb: "A high-converting one-page site built to drive calls, texts, and form leads.",
+    popular: false,
+    features: [
+      "Premium one-page layout (hero → services → proof → CTA → contact)",
+      "Mobile-first + fast load",
+      "Lead capture (call button, form routing, click-to-text)",
+      "Basic on-page SEO (titles/meta, index-ready)",
+      "Hosting, SSL, backups",
+      "Monthly updates (small edits included)",
+    ],
+  },
+  {
+    name: "5-Page Growth",
+    setup: 1999,
+    monthly: 199,
+    blurb: "For serious local businesses: service pages, credibility, and conversion flow.",
+    popular: true,
+    features: [
+      "Up to 5 pages (Home, Services, About, Proof, Contact)",
+      "Conversion-focused sections + CTAs",
+      "Analytics + event tracking (calls/forms)",
+      "Basic local SEO foundations",
+      "Hosting, SSL, backups",
+      "Monthly updates (more edits included)",
+    ],
+  },
+  {
+    name: "10-Page Authority",
+    setup: 2999,
+    monthly: 249,
+    blurb: "For multi-service businesses that want maximum coverage and trust.",
+    popular: false,
+    features: [
+      "Up to 10 pages (structured services + content)",
+      "Advanced tracking + performance tuning",
+      "Stronger SEO structure (internal linking, schema-ready)",
+      "Speed optimization + QA",
+      "Hosting, SSL, backups",
+      "Priority monthly updates",
+    ],
+  },
+];
+
+const voiceUpgrade = {
+  name: "Optional Upgrade: AI Receptionist",
+  blurb:
+    "After your site starts generating leads, upgrade your phones to capture every call, qualify leads, and book automatically.",
+  bullets: [
+    "24/7 call answering + intake",
+    "Lead capture + summaries + call insights",
+    "Booking + confirmations (calendar integration)",
+    "Missed-call follow-up via SMS (optional)",
+    "Routes VIP/urgent calls to your team",
+  ],
+  note:
+    "We typically add voice automation after launch once you’ve seen lead flow and want higher conversion.",
+};
+
+const industries = [
+  { label: "Home Services", icon: Icons.Wrench },
+  { label: "Clinics & Med Spas", icon: Icons.Stethoscope },
+  { label: "Dental Clinics", icon: Icons.Tooth },
+  { label: "Auto Services", icon: Icons.Building },
+  { label: "Studios & Boutiques", icon: Icons.Scissors },
+];
+
+const faqs = [
+  {
+    q: "Do you do custom designs or templates?",
+    a: "We build premium, conversion-first layouts custom tailored to your business.",
+  },
+  {
+    q: "What does the monthly fee cover?",
+    a: "Hosting, SSL, backups, basic security, and ongoing updates/edits.",
+  },
+  {
+    q: "How fast can you launch?",
+    a: "One-page sites can launch in ~3–7 days. 5-page sites typically take ~1–3 weeks.",
+  },
+  {
+    q: "Can you add the AI receptionist later?",
+    a: "Yes. We’re intentionally website-first.",
+  },
+  {
+    q: "Do you handle copywriting and photos?",
+    a: "We can work with your existing copy/photos or help refine them.",
+  },
+];
+
+function Section({ id, className = "", children }) {
   return (
-    <main style={{ padding: '40px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Covex</h1>
-      <p>Homepage coming soon.</p>
-    </main>
+    <section id={id} className={`relative scroll-mt-28 md:scroll-mt-32 py-24 md:py-32 ${className}`}>
+      {children}
+    </section>
+  );
+}
+
+function Container({ className = "", children }) {
+  return <div className={`mx-auto w-full max-w-7xl px-6 md:px-8 ${className}`}>{children}</div>;
+}
+
+function Pill({ children }) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur">
+      {children}
+    </span>
+  );
+}
+
+function GradientBG() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div className="absolute -top-40 left-1/2 h-[60rem] w-[60rem] -translate-x-1/2 rounded-full bg-gradient-to-b from-indigo-500/30 via-sky-500/20 to-cyan-400/10 blur-3xl" />
+      <div className="absolute bottom-0 right-0 h-80 w-80 translate-x-1/3 translate-y-1/3 rounded-full bg-gradient-to-tr from-white/10 to-white/0 blur-2xl" />
+      <div className="absolute left-0 top-1/3 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+    </div>
+  );
+}
+
+function CheckItem({ text }) {
+  return (
+    <li className="flex items-start gap-3">
+      <div className="mt-0.5 rounded-full bg-white/10 p-1">
+        <Icons.Check className="h-3 w-3" />
+      </div>
+      <span className="text-white/80">{text}</span>
+    </li>
+  );
+}
+
+function scrollToId(e, id) {
+  if (e) e.preventDefault();
+  const el = document.getElementById(id);
+  if (!el) return;
+  const header = document.querySelector("header");
+  const offset = header ? header.offsetHeight + 16 : 96;
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: "smooth" });
+  try {
+    history.replaceState(null, "", `#${id}`);
+  } catch {}
+}
+
+function AppInner() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    size: "",
+    message: "",
+    interest: "Website",
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true);
+    console.log("Lead:", form);
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white antialiased selection:bg-white/20 scroll-smooth">
+      <GradientBG />
+
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/60 backdrop-blur">
+        <Container className="py-1 md:py-1">
+          <div className="grid grid-cols-2 md:grid-cols-3 items-center">
+            <a href="/" className="flex items-center gap-3 justify-self-start -ml-3 md:-ml-6" aria-label={brand.name}>
+              <img
+                src="/upscalemedia-transformed.png"
+                alt={brand.name}
+                className="h-24 w-auto md:h-36 lg:h-40 -mt-2 md:-mt-3"
+                loading="eager"
+                decoding="async"
+              />
+            </a>
+
+            <nav className="hidden md:flex items-center justify-center gap-7 text-sm text-white/70">
+              <a href="#websites" onClick={(e) => scrollToId(e, "websites")} className="hover:text-white">Websites</a>
+              <a href="#voice" onClick={(e) => scrollToId(e, "voice")} className="hover:text-white">Voice AI</a>
+              <a href="#how" onClick={(e) => scrollToId(e, "how")} className="hover:text-white">Process</a>
+              <a href="#pricing" onClick={(e) => scrollToId(e, "pricing")} className="hover:text-white">Pricing</a>
+              <a href="#faq" onClick={(e) => scrollToId(e, "faq")} className="hover:text-white">FAQ</a>
+            </nav>
+
+            <div className="flex items-center gap-3 justify-self-end">
+              <a href="#contact" onClick={(e) => scrollToId(e, "contact")} className="rounded-xl border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10">
+                Get a quote
+              </a>
+              <a href="/login" className="hidden md:inline-block rounded-xl bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-white/90">
+                Login
+              </a>
+            </div>
+          </div>
+        </Container>
+      </header>
+
+      <Section id="home" className="pt-8 md:pt-10">
+        <Container>
+          <div className="mx-auto max-w-5xl text-center">
+            <h1 className="text-4xl md:text-6xl font-semibold leading-tight tracking-tight">
+              Build a site that gets you booked.
+            </h1>
+            <p className="mt-4 text-base md:text-xl text-white/70">
+              Covex builds conversion-first websites for local businesses—then upgrades your phones with AI to capture every lead.
+            </p>
+          </div>
+        </Container>
+
+        <Container className="mt-10 grid items-center gap-10 md:grid-cols-2">
+          <div>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <h2 className="mt-6 text-4xl font-semibold leading-tight tracking-tight md:text-6xl">
+                Website first.
+                <span className="block bg-gradient-to-r from-white to-white/50 bg-clip-text text-transparent">
+                  Automation later.
+                </span>
+              </h2>
+              <p className="mt-6 max-w-xl text-base text-white/70 md:text-lg">
+                We start by fixing your online presence—fast, clean, and built to convert. Once leads are flowing, you can optionally
+                upgrade to a 24/7 AI receptionist so you stop missing calls and bookings.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <a href="#pricing" onClick={(e) => scrollToId(e, "pricing")} className="group inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:-translate-y-0.5">
+                  View website pricing <Icons.ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </a>
+                <a href="#contact" onClick={(e) => scrollToId(e, "contact")} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 px-5 py-3 text-sm text-white/80 hover:bg-white/10">
+                  Get a quote
+                </a>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3 text-xs text-white/50">
+                <Pill><Icons.Sparkles className="h-3.5 w-3.5" /> Conversion-first design</Pill>
+                <Pill><Icons.BarChart className="h-3.5 w-3.5" /> Tracking & analytics</Pill>
+                <Pill><Icons.Shield className="h-3.5 w-3.5" /> Hosting, SSL, backups</Pill>
+              </div>
+            </motion.div>
+          </div>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="mx-auto w-full max-w-md">
+            <div className="relative rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 shadow-2xl backdrop-blur">
+              <div className="mx-auto h-10 w-28 rounded-full bg-white/10" />
+              <div className="mt-6 rounded-2xl bg-black/60 p-4 ring-1 ring-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-black">
+                    <Icons.Globe className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{brand.name} Websites</p>
+                    <p className="text-xs text-white/60">“Designed to get you calls, leads, and bookings.”</p>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-3 text-xs text-white/70">
+                  <div className="flex items-center gap-2"><Icons.Sparkles className="h-4 w-4" /> Premium layout + copy flow</div>
+                  <div className="flex items-center gap-2"><Icons.BarChart className="h-4 w-4" /> Event tracking (calls/forms)</div>
+                  <div className="flex items-center gap-2"><Icons.Headphones className="h-4 w-4" /> Optional AI receptionist upgrade</div>
+                </div>
+              </div>
+              <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-gradient-to-tr from-white/30 to-white/0 blur-2xl" />
+            </div>
+          </motion.div>
+        </Container>
+      </Section>
+
+      <Section id="websites" className="py-24">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Website services</h2>
+            <p className="mt-3 text-white/70">Clean design, fast load, and built-in conversion paths—so visitors become leads.</p>
+          </div>
+        </Container>
+      </Section>
+
+      <Section id="voice" className="py-24">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Voice AI (optional upgrade)</h2>
+            <p className="mt-3 text-white/70">
+              Once your website is producing leads, upgrade your phones to capture every call and convert more of what you already earn.
+            </p>
+          </div>
+        </Container>
+      </Section>
+
+      <Section id="how" className="py-24">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Process</h2>
+            <p className="mt-3 text-white/70">A simple workflow that gets you live fast.</p>
+          </div>
+        </Container>
+      </Section>
+
+      <Section id="pricing" className="py-24">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Website pricing</h2>
+            <p className="mt-3 text-white/70">Simple, productized packages.</p>
+          </div>
+        </Container>
+      </Section>
+
+      <Section id="faq" className="py-24">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">FAQ</h2>
+            <p className="mt-3 text-white/70">Everything you need to know before you get started.</p>
+          </div>
+        </Container>
+      </Section>
+
+      <Section id="contact" className="pb-32">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Get a quote</h2>
+            <p className="mt-3 text-white/70">
+              Tell us what you need. We’ll recommend the right website package and any optional automations.
+            </p>
+          </div>
+        </Container>
+      </Section>
+
+      <footer className="border-t border-[rgba(255,255,255,.12)] py-8">
+        <div className="container mx-auto px-6 flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <img src="/upscalemedia-transformed.png" alt="Covex" className="h-8 w-auto" loading="eager" decoding="async" />
+            <div className="text-xs">© {new Date().getFullYear()} — All rights reserved.</div>
+          </div>
+
+          <nav className="flex gap-4 text-sm text-white/70">
+            <a className="hover:text-white" href={`mailto:${brand.supportEmail}`}>Support</a>
+            <a className="hover:text-white" href="/privacy.html">Privacy</a>
+            <a className="hover:text-white" href="/terms.html">Terms</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <ErrorBoundary>
+      <AppInner />
+    </ErrorBoundary>
   );
 }
