@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 const IconBase = ({ children, className = "h-6 w-6", strokeWidth = 1.6 }) => (
@@ -99,6 +99,12 @@ const Icons = {
       <path d="M7 18l-4 3V6" />
     </IconBase>
   ),
+  Clock: (p) => (
+    <IconBase {...p}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+    </IconBase>
+  ),
   ArrowRight: (p) => (
     <IconBase {...p}>
       <path d="M5 12h14M13 5l7 7-7 7" />
@@ -114,10 +120,10 @@ const Icons = {
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null };
   }
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
   }
   componentDidCatch(error, info) {
     console.error("ErrorBoundary caught:", error, info);
@@ -128,7 +134,9 @@ class ErrorBoundary extends React.Component {
         <div className="min-h-screen bg-black text-white p-6">
           <div className="mx-auto max-w-2xl rounded-xl border border-white/10 bg-white/5 p-6">
             <h1 className="text-xl font-semibold">Something went wrong.</h1>
-            <p className="mt-2 text-sm text-white/70">A runtime error occurred.</p>
+            <p className="mt-2 text-sm text-white/70">
+              A runtime error occurred. Check the console for details.
+            </p>
           </div>
         </div>
       );
@@ -139,6 +147,7 @@ class ErrorBoundary extends React.Component {
 
 const brand = {
   name: "Covex",
+  tagline: "Websites that convert. Automations that scale.",
   supportEmail: "support@covex.app",
   phone: "+1 (864) 787-8324",
 };
@@ -217,23 +226,23 @@ const industries = [
 const faqs = [
   {
     q: "Do you do custom designs or templates?",
-    a: "We build premium, conversion-first layouts custom tailored to your business.",
+    a: "We build premium, conversion-first layouts custom tailored to your business. The goal is simple: get you more calls, forms, and booked jobs—not just a “pretty website.”",
   },
   {
     q: "What does the monthly fee cover?",
-    a: "Hosting, SSL, backups, basic security, and ongoing updates/edits.",
+    a: "Hosting, SSL, backups, basic security, and ongoing updates/edits. You’re not paying to “keep the lights on”—you’re paying for maintenance and continuous improvement.",
   },
   {
     q: "How fast can you launch?",
-    a: "One-page sites can launch in ~3–7 days. 5-page sites typically take ~1–3 weeks.",
+    a: "One-page sites can launch in ~3–7 days. 5-page sites typically take ~1–3 weeks. 10-page sites take ~3–6 weeks depending on content and approvals.",
   },
   {
     q: "Can you add the AI receptionist later?",
-    a: "Yes. We’re intentionally website-first.",
+    a: "Yes. We’re intentionally website-first. Once your site is live and leads are coming in, we can upgrade your phone lines with a voice agent to capture every call and increase conversion.",
   },
   {
     q: "Do you handle copywriting and photos?",
-    a: "We can work with your existing copy/photos or help refine them.",
+    a: "We can work with your existing copy/photos or help refine them. If you need full copywriting or content creation, we can scope it as an add-on.",
   },
 ];
 
@@ -326,19 +335,40 @@ function AppInner() {
               />
             </a>
 
-            <nav className="hidden md:flex items-center justify-center gap-7 text-sm text-white/70">
-              <a href="#websites" onClick={(e) => scrollToId(e, "websites")} className="hover:text-white">Websites</a>
-              <a href="#voice" onClick={(e) => scrollToId(e, "voice")} className="hover:text-white">Voice AI</a>
-              <a href="#how" onClick={(e) => scrollToId(e, "how")} className="hover:text-white">Process</a>
-              <a href="#pricing" onClick={(e) => scrollToId(e, "pricing")} className="hover:text-white">Pricing</a>
-              <a href="#faq" onClick={(e) => scrollToId(e, "faq")} className="hover:text-white">FAQ</a>
+            <nav
+              className="hidden md:flex items-center justify-center gap-7 text-sm text-white/70"
+              role="navigation"
+              aria-label="Primary"
+            >
+              <a href="#websites" onClick={(e) => scrollToId(e, "websites")} className="hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded-md">
+                Websites
+              </a>
+              <a href="#voice" onClick={(e) => scrollToId(e, "voice")} className="hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded-md">
+                Voice AI
+              </a>
+              <a href="#how" onClick={(e) => scrollToId(e, "how")} className="hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded-md">
+                Process
+              </a>
+              <a href="#pricing" onClick={(e) => scrollToId(e, "pricing")} className="hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded-md">
+                Pricing
+              </a>
+              <a href="#faq" onClick={(e) => scrollToId(e, "faq")} className="hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40 rounded-md">
+                FAQ
+              </a>
             </nav>
 
             <div className="flex items-center gap-3 justify-self-end">
-              <a href="#contact" onClick={(e) => scrollToId(e, "contact")} className="rounded-xl border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10">
+              <a
+                href="#contact"
+                onClick={(e) => scrollToId(e, "contact")}
+                className="rounded-xl border border-white/15 px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+              >
                 Get a quote
               </a>
-              <a href="/login" className="hidden md:inline-block rounded-xl bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-white/90">
+              <a
+                href="/login"
+                className="hidden md:inline-block rounded-xl bg-white px-3 py-2 text-sm font-semibold text-black hover:bg-white/90"
+              >
                 Login
               </a>
             </div>
@@ -373,23 +403,42 @@ function AppInner() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <a href="#pricing" onClick={(e) => scrollToId(e, "pricing")} className="group inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:-translate-y-0.5">
+                <a
+                  href="#pricing"
+                  onClick={(e) => scrollToId(e, "pricing")}
+                  className="group inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:-translate-y-0.5"
+                >
                   View website pricing <Icons.ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                 </a>
-                <a href="#contact" onClick={(e) => scrollToId(e, "contact")} className="inline-flex items-center gap-2 rounded-2xl border border-white/15 px-5 py-3 text-sm text-white/80 hover:bg-white/10">
+                <a
+                  href="#contact"
+                  onClick={(e) => scrollToId(e, "contact")}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/15 px-5 py-3 text-sm text-white/80 hover:bg-white/10"
+                >
                   Get a quote
                 </a>
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-3 text-xs text-white/50">
-                <Pill><Icons.Sparkles className="h-3.5 w-3.5" /> Conversion-first design</Pill>
-                <Pill><Icons.BarChart className="h-3.5 w-3.5" /> Tracking & analytics</Pill>
-                <Pill><Icons.Shield className="h-3.5 w-3.5" /> Hosting, SSL, backups</Pill>
+                <Pill>
+                  <Icons.Sparkles className="h-3.5 w-3.5" /> Conversion-first design
+                </Pill>
+                <Pill>
+                  <Icons.BarChart className="h-3.5 w-3.5" /> Tracking & analytics
+                </Pill>
+                <Pill>
+                  <Icons.Shield className="h-3.5 w-3.5" /> Hosting, SSL, backups
+                </Pill>
               </div>
             </motion.div>
           </div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="mx-auto w-full max-w-md">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="mx-auto w-full max-w-md"
+          >
             <div className="relative rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 shadow-2xl backdrop-blur">
               <div className="mx-auto h-10 w-28 rounded-full bg-white/10" />
               <div className="mt-6 rounded-2xl bg-black/60 p-4 ring-1 ring-white/10">
@@ -403,9 +452,15 @@ function AppInner() {
                   </div>
                 </div>
                 <div className="mt-4 space-y-3 text-xs text-white/70">
-                  <div className="flex items-center gap-2"><Icons.Sparkles className="h-4 w-4" /> Premium layout + copy flow</div>
-                  <div className="flex items-center gap-2"><Icons.BarChart className="h-4 w-4" /> Event tracking (calls/forms)</div>
-                  <div className="flex items-center gap-2"><Icons.Headphones className="h-4 w-4" /> Optional AI receptionist upgrade</div>
+                  <div className="flex items-center gap-2">
+                    <Icons.Sparkles className="h-4 w-4" /> Premium layout + copy flow
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icons.BarChart className="h-4 w-4" /> Event tracking (calls/forms)
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icons.Headphones className="h-4 w-4" /> Optional AI receptionist upgrade
+                  </div>
                 </div>
               </div>
               <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-gradient-to-tr from-white/30 to-white/0 blur-2xl" />
@@ -418,7 +473,30 @@ function AppInner() {
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Website services</h2>
-            <p className="mt-3 text-white/70">Clean design, fast load, and built-in conversion paths—so visitors become leads.</p>
+            <p className="mt-3 text-white/70">
+              Clean design, fast load, and built-in conversion paths—so visitors become leads.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {[
+              { icon: Icons.Globe, title: "Conversion-first layout", desc: "Above-the-fold clarity, strong CTAs, proof, and frictionless contact." },
+              { icon: Icons.BarChart, title: "Tracking that matters", desc: "Track calls, forms, and key actions—know what’s actually working." },
+              { icon: Icons.Shield, title: "Managed & protected", desc: "Hosting, SSL, backups, and ongoing updates—no fragile DIY setup." },
+            ].map((f, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+                className="group rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur hover:bg-white/10"
+              >
+                <f.icon className="h-6 w-6 text-white" />
+                <h3 className="mt-4 text-lg font-semibold">{f.title}</h3>
+                <p className="mt-2 text-sm text-white/70">{f.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </Container>
       </Section>
@@ -431,6 +509,75 @@ function AppInner() {
               Once your website is producing leads, upgrade your phones to capture every call and convert more of what you already earn.
             </p>
           </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <div className="flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-black">
+                  <Icons.Phone className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">{voiceUpgrade.name}</h3>
+                  <p className="text-sm text-white/70">{voiceUpgrade.blurb}</p>
+                </div>
+              </div>
+
+              <ul className="mt-6 space-y-3 text-sm">
+                {voiceUpgrade.bullets.map((b) => (
+                  <CheckItem key={b} text={b} />
+                ))}
+              </ul>
+
+              <p className="mt-6 text-xs text-white/50">{voiceUpgrade.note}</p>
+              <a
+                href="#contact"
+                onClick={(e) => scrollToId(e, "contact")}
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Ask about the upgrade <Icons.ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+              <h3 className="text-lg font-semibold">Why this order works</h3>
+              <p className="mt-2 text-sm text-white/70">
+                Most businesses don’t have a lead problem—they have a conversion problem. Website first gets you more inbound. Voice AI later
+                increases conversion without hiring.
+              </p>
+
+              <div className="mt-6 space-y-4 text-sm text-white/75">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 rounded-full bg-white/10 p-1">
+                    <Icons.Check className="h-3 w-3" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white/90">Step 1: Fix the funnel</p>
+                    <p className="text-white/70">A site that clearly explains services, builds trust, and pushes action.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 rounded-full bg-white/10 p-1">
+                    <Icons.Check className="h-3 w-3" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white/90">Step 2: Track conversions</p>
+                    <p className="text-white/70">See calls/forms and know where leads come from.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 rounded-full bg-white/10 p-1">
+                    <Icons.Check className="h-3 w-3" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-white/90">Step 3: Capture every call</p>
+                    <p className="text-white/70">Upgrade to AI receptionist once you want higher conversion.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </Container>
       </Section>
 
@@ -440,6 +587,34 @@ function AppInner() {
             <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Process</h2>
             <p className="mt-3 text-white/70">A simple workflow that gets you live fast.</p>
           </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-4">
+            {[
+              { title: "Discover", desc: "Quick call: your services, goal, competitors, and offer clarity.", icon: Icons.Message },
+              { title: "Build", desc: "We design and build the site with conversion flow and tracking.", icon: Icons.Globe },
+              { title: "Launch", desc: "Go live with SSL, backups, and lead routing dialed in.", icon: Icons.Shield },
+              { title: "Optimize", desc: "Ongoing updates + optional automations as you scale.", icon: Icons.BarChart },
+            ].map((s, i) => (
+              <div key={i} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <s.icon className="h-6 w-6" />
+                <h3 className="mt-4 text-lg font-semibold">
+                  {i + 1}. {s.title}
+                </h3>
+                <p className="mt-2 text-sm text-white/70">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-5">
+            {industries.map(({ label, icon: Icon }, idx) => (
+              <div key={idx} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-black">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className="text-sm">{label}</span>
+              </div>
+            ))}
+          </div>
         </Container>
       </Section>
 
@@ -447,8 +622,78 @@ function AppInner() {
         <Container>
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">Website pricing</h2>
-            <p className="mt-3 text-white/70">Simple, productized packages.</p>
+            <p className="mt-3 text-white/70">Simple, productized packages. Website first, with optional upgrades later.</p>
           </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {websitePricing.map((p) => (
+              <div
+                key={p.name}
+                className={`relative rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur ${
+                  p.popular ? "ring-2 ring-white/30" : ""
+                }`}
+              >
+                {p.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-black">
+                    Most popular
+                  </div>
+                )}
+
+                <h3 className="text-xl font-semibold">{p.name}</h3>
+                <p className="mt-2 text-sm text-white/70">{p.blurb}</p>
+
+                <div className="mt-5 grid gap-3 rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-sm text-white/70">Setup</span>
+                    <span className="text-2xl font-semibold">${p.setup.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-sm text-white/70">Monthly</span>
+                    <span className="text-2xl font-semibold">${p.monthly}</span>
+                  </div>
+                </div>
+
+                <ul className="mt-6 space-y-3 text-sm">
+                  {p.features.map((f) => (
+                    <CheckItem key={f} text={f} />
+                  ))}
+                </ul>
+
+                <a
+                  href="#contact"
+                  onClick={(e) => scrollToId(e, "contact")}
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-black hover:bg-white/90"
+                >
+                  Get started <Icons.ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            ))}
+          </div>
+
+          <div className="mx-auto mt-10 max-w-4xl rounded-3xl border border-white/10 bg-white/5 p-6">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-black">
+                  <Icons.Phone className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Optional upgrade</p>
+                  <p className="text-white/70 text-sm">Add Voice AI after launch to capture every call and increase conversion.</p>
+                </div>
+              </div>
+              <a
+                href="#contact"
+                onClick={(e) => scrollToId(e, "contact")}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"
+              >
+                Ask about Voice AI <Icons.ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+
+          <p className="mt-4 text-xs text-white/50 text-center">
+            Final scope depends on content complexity and integrations. We keep packages tight so delivery stays fast.
+          </p>
         </Container>
       </Section>
 
@@ -457,6 +702,17 @@ function AppInner() {
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">FAQ</h2>
             <p className="mt-3 text-white/70">Everything you need to know before you get started.</p>
+          </div>
+          <div className="mx-auto mt-10 max-w-3xl divide-y divide-white/10 rounded-2xl border border-white/10">
+            {faqs.map((f, i) => (
+              <details key={i} className="group p-6 open:bg-white/5">
+                <summary className="flex cursor-pointer list-none items-center justify-between text-left text-base font-medium text-white/90">
+                  {f.q}
+                  <span className="ml-4 rounded-full border border-white/10 bg-white/5 p-1 text-xs text-white/60">{i + 1}</span>
+                </summary>
+                <p className="mt-3 text-sm text-white/70">{f.a}</p>
+              </details>
+            ))}
           </div>
         </Container>
       </Section>
@@ -469,6 +725,86 @@ function AppInner() {
               Tell us what you need. We’ll recommend the right website package and any optional automations.
             </p>
           </div>
+
+          <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-white/10 bg-white/5 p-6">
+            {submitted ? (
+              <div className="text-center">
+                <h3 className="text-xl font-semibold">Thanks! We’ll reach out shortly.</h3>
+                <p className="mt-2 text-white/70">
+                  Prefer to talk now? Call us at{" "}
+                  <a className="underline" href={`tel:${brand.phone.replace(/[^\d+]/g, "")}`}>
+                    {brand.phone}
+                  </a>
+                  .
+                </p>
+              </div>
+            ) : (
+              <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
+                <input
+                  className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none placeholder:text-white/40 focus:border-white/30"
+                  placeholder="Full name"
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                />
+                <input
+                  type="email"
+                  className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none placeholder:text-white/40 focus:border-white/30"
+                  placeholder="Email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+                <input
+                  className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none placeholder:text-white/40 focus:border-white/30"
+                  placeholder="Phone"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
+                <input
+                  className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none placeholder:text-white/40 focus:border-white/30"
+                  placeholder="Business / Company"
+                  value={form.company}
+                  onChange={(e) => setForm({ ...form, company: e.target.value })}
+                />
+                <select
+                  className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none focus:border-white/30"
+                  value={form.size}
+                  onChange={(e) => setForm({ ...form, size: e.target.value })}
+                >
+                  <option value="">Company size</option>
+                  <option value="1-3">1–3 team members</option>
+                  <option value="4-10">4–10 team members</option>
+                  <option value="11-25">11–25 team members</option>
+                  <option value="26+">26+ team members</option>
+                </select>
+
+                <select
+                  className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none focus:border-white/30"
+                  value={form.interest}
+                  onChange={(e) => setForm({ ...form, interest: e.target.value })}
+                >
+                  <option value="Website">Interested in: Website</option>
+                  <option value="Website+VoiceAI">Interested in: Website + Voice AI upgrade</option>
+                  <option value="VoiceAI">Interested in: Voice AI only</option>
+                </select>
+
+                <textarea
+                  className="rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none placeholder:text-white/40 focus:border-white/30 md:col-span-2"
+                  rows={5}
+                  placeholder="What should your website achieve? (calls, bookings, leads, service areas, etc.)"
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                />
+                <button
+                  type="submit"
+                  className="md:col-span-2 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-black hover:bg-white/90"
+                >
+                  Request quote <Icons.ArrowRight className="h-4 w-4" />
+                </button>
+              </form>
+            )}
+          </div>
         </Container>
       </Section>
 
@@ -480,9 +816,15 @@ function AppInner() {
           </div>
 
           <nav className="flex gap-4 text-sm text-white/70">
-            <a className="hover:text-white" href={`mailto:${brand.supportEmail}`}>Support</a>
-            <a className="hover:text-white" href="/privacy.html">Privacy</a>
-            <a className="hover:text-white" href="/terms.html">Terms</a>
+            <a className="hover:text-white" href={`mailto:${brand.supportEmail}`}>
+              Support
+            </a>
+            <a className="hover:text-white" href="/privacy.html">
+              Privacy
+            </a>
+            <a className="hover:text-white" href="/terms.html">
+              Terms
+            </a>
           </nav>
         </div>
       </footer>
